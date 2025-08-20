@@ -3,13 +3,12 @@ import { Component, computed, effect, EventEmitter, inject, Input, Output, signa
 import { NgxJsonReaderNodeComponent } from './ngx-json-reader-node/ngx-json-reader-node.component';
 import {
   NgxJsonReaderChangeEvent,
-  NgxJsonReaderDiffResult,
+  NgxJsonReaderData,
   NgxJsonReaderHeaders,
   NgxJsonReaderNodeDeleteEmit,
   NgxJsonReaderNodeValueChangeEmit,
   NgxJsonReaderSrcUrls,
   NgxJsonReaderValue,
-  NgxJsonReaderViewMode,
 } from './types';
 import { deleteAtPath, updateAtPath } from './utils';
 
@@ -24,11 +23,10 @@ import { deleteAtPath, updateAtPath } from './utils';
 })
 export class NgxJsonReaderComponent {
   #http = inject(HttpClient);
-  readonly NgxViewMode = NgxJsonReaderViewMode;
 
   @Input() srcUrls?: NgxJsonReaderSrcUrls;
   @Input() srcHeaders?: NgxJsonReaderHeaders;
-  @Input() data?: NgxJsonReaderValue | NgxJsonReaderValue[];
+  @Input() data?: NgxJsonReaderData;
 
   @Input() editable = true;
   @Input() expanded = true;
@@ -37,7 +35,6 @@ export class NgxJsonReaderComponent {
   @Input() downloadFilename: string | string[] = 'data.json';
 
   @Output() dataChange = new EventEmitter<NgxJsonReaderChangeEvent>();
-  @Output() diffComputed = new EventEmitter<NgxJsonReaderDiffResult>();
   @Output() error = new EventEmitter<any>();
 
   #collection = signal<NgxJsonReaderValue>([]);
@@ -123,7 +120,6 @@ export class NgxJsonReaderComponent {
     const {
       path,
       current,
-      previous,
       collectionIndex,
     } = event;
     const collectionItem = this.collection()[collectionIndex];
@@ -131,16 +127,12 @@ export class NgxJsonReaderComponent {
     const newCollection = [...this.collection()];
     newCollection[collectionIndex] = updated;
     this.#collection.set(newCollection);
-    this.dataChange.emit({
-      message: "Updated",
-      // options: event,
-    });
+    this.dataChange.emit({ ...event });
   }
 
   onDelete(event: NgxJsonReaderNodeDeleteEmit) {
     const {
       collectionIndex,
-      previous,
       path,
     } = event;
     const collectionItem = this.collection()[collectionIndex];
@@ -148,10 +140,7 @@ export class NgxJsonReaderComponent {
     const newCollection = [...this.collection()];
     newCollection[collectionIndex] = updated;
     this.#collection.set(newCollection);
-    this.dataChange.emit({
-      message: "Delete",
-      // options: event,
-    });
+    this.dataChange.emit({ ...event });
   }
 
   expandAll() { document.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = true); }

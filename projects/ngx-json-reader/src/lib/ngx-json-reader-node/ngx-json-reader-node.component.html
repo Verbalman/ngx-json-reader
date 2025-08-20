@@ -1,52 +1,67 @@
 <details [open]="expanded" [attr.data-colection-index]="collectionIndex">
   <summary>
     <span class="key">{{ label }}</span>
-    <ng-container [ngSwitch]="type">
-      <span *ngSwitchCase="'object'" class="object">({{ keys.length }})</span>
-      <span *ngSwitchCase="'array'" class="array">({{ value?.length }})</span>
-      <span *ngSwitchDefault class="mono">= {{ value | json }}</span>
-    </ng-container>
+    @switch(type) {
+      @case (valueType.OBJECT) {
+        <span class="object">({{ keys.length }})</span>
+      }
+      @case (valueType.ARRAY) {
+        <span class="array">({{ value?.length }})</span>
+      }
+      @default {
+        <span class="mono">= {{ value | json }}</span>
+      }
+    }
   </summary>
 
-
-  <div *ngIf="type==='object'" class="pl-4">
-    <div class="kv" *ngFor="let k of keys; let i = index">
-      <ngx-ngx-json-reader-node
-        [label]="k"
-        [value]="value[k]"
-        [path]="makePath(k)"
-        [collectionIndex]="collectionIndex"
-        [editable]="editable"
-        (valueChange)="valueChange.emit($event)"
-        (delete)="delete.emit($event)"
-      />
+  @if (type === valueType.OBJECT) {
+    <div class="pl-4">
+      @for (k of keys; let index = $index; track index) {
+        <div class="kv">
+          <ngx-ngx-json-reader-node
+            [label]="k"
+            [value]="value[k]"
+            [path]="makePath(k)"
+            [collectionIndex]="collectionIndex"
+            [editable]="editable"
+            (valueChange)="valueChange.emit($event)"
+            (delete)="delete.emit($event)"
+          />
+        </div>
+      }
+      @if (editable) {
+        <div class="kv">
+          <button type="button" (click)="addObjectProp()">+ add property</button>
+        </div>
+      }
     </div>
-    <div *ngIf="editable" class="kv">
-      <button type="button" (click)="addObjectProp()">+ add property</button>
+  } @else if (type === valueType.ARRAY) {
+    <div class="pl-4">
+      @for (item of value; let index = $index; track index) {
+        <div class="kv">
+          <ngx-ngx-json-reader-node
+            [label]="index"
+            [value]="item"
+            [path]="makePath(index)"
+            [collectionIndex]="collectionIndex"
+            [editable]="editable"
+            (valueChange)="valueChange.emit($event)"
+            (delete)="delete.emit($event)"
+          />
+          @if (editable) {
+            <button type="button" (click)="onDelete(index, item)">Delete</button>
+          }
+        </div>
+      }
+      @if (editable) {
+        <div class="kv">
+          <button type="button" (click)="addArrayItem()">+ push item</button>
+        </div>
+      }
     </div>
-  </div>
-
-
-  <div *ngIf="type==='array'" class="pl-4">
-    <div class="kv" *ngFor="let item of value; let i = index">
-      <ngx-ngx-json-reader-node
-        [label]="i"
-        [value]="item"
-        [path]="makePath(i)"
-        [collectionIndex]="collectionIndex"
-        [editable]="editable"
-        (valueChange)="valueChange.emit($event)"
-        (delete)="delete.emit($event)"
-      />
-      <button *ngIf="editable" type="button" (click)="onDelete(i, item)">Delete</button>
+  } @else if (type === valueType.PRIMITIVE && editable) {
+    <div class="pl-4">
+      <input class="val" [value]="value" (change)="onInput($event)" />
     </div>
-    <div *ngIf="editable" class="kv">
-      <button type="button" (click)="addArrayItem()">+ push item</button>
-    </div>
-  </div>
-
-
-  <div *ngIf="type==='primitive' && editable" class="pl-4">
-    <input class="val" [value]="value" (change)="onInput($event)" />
-  </div>
+  }
 </details>

@@ -3,3 +3,8 @@
  */
 
 export * from './lib/ngx-json-reader.component';
+export {
+  NgxJsonReaderSrcUrls,
+  NgxJsonReaderHeaders,
+  NgxJsonReaderData,
+} from './lib/types';
