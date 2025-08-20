@@ -10,4 +10,10 @@ import { NgxJsonReaderComponent } from 'ngx-json-reader';
 })
 export class AppComponent {
   title = 'demo';
+  srcUrls = [
+    'https://stage-tools.kim-affiliates.com/assets/i18n/en.json',
+    'https://stage-tools.kim-affiliates.com/assets/i18n/en.json',
+    'https://stage-tools.kim-affiliates.com/assets/i18n/ua.json',
+    'https://stage-tools.kim-affiliates.com/assets/i18n/ua.json',
+  ];
 }

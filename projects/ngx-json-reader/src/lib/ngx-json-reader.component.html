@@ -1,0 +1,63 @@
+<div class="ngx-jr-main">
+  <header class="ngx-jr-header">
+    <!--  <button type="button" (click)="download()" *ngIf="mode() === NgxViewMode.TREE">Download</button>-->
+    <!--  <ng-container *ngIf="mode() !== NgxViewMode.TREE">-->
+    <!--    <button type="button" (click)="download(0)" [disabled]="!roots()[0]">Download Left</button>-->
+    <!--    <button type="button" (click)="download(1)" [disabled]="!roots()[1]">Download Right</button>-->
+    <!--  </ng-container>-->
+
+    <div class="ngx-jr-data-size">{{ sizeStr() }}</div>
+    <div class="">
+      <button type="button" (click)="expandAll()">Expand All</button>
+      <button type="button" (click)="collapseAll()">Collapse All</button>
+    </div>
+  </header>
+
+  <section class="ngx-jr-container">
+    <div class="ngx-jr-content">
+      @if (collection()?.length) {
+        @for (item of collection(); track item; let index = $index) {
+          <div class="ngx-jr-content-item">
+            <ngx-ngx-json-reader-node
+              [label]="rootLabel"
+              [value]="item"
+              [path]="[]"
+              [expanded]="expanded"
+              [editable]="editable"
+              (valueChange)="onValueChange($event, index)"
+              (delete)="onDelete($event)"
+            />
+          </div>
+        }
+      } @else {
+        <span>No data</span>
+      }
+    </div>
+  </section>
+</div>
+
+
+<!--<div class="tree" *ngIf="mode() === NgxViewMode.TREE">-->
+<!--  <ng-container *ngIf="root() as r; else noData">-->
+<!--    <ngx-ngx-json-reader-node-->
+<!--      [label]="rootLabel"-->
+<!--      [value]="r"-->
+<!--      [path]="[]"-->
+<!--      [expanded]="expanded"-->
+<!--      [editable]="editable"-->
+<!--      (valueChange)="onValueChange($event)"-->
+<!--      (delete)="onDelete($event)" />-->
+<!--  </ng-container>-->
+<!--</div>-->
+
+
+<!--<ng-template #noData>No data</ng-template>-->
+
+
+<!--<ngx-ngx-json-reader-compare-->
+<!--  *ngIf="mode() !== 'tree' && roots().length >= 2"-->
+<!--  [left]="roots()[0]"-->
+<!--  [right]="roots()[1]"-->
+<!--  [filter]="filter"-->
+<!--  (diffReady)="diffComputed.emit($event)"-->
+<!--/>-->

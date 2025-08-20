@@ -1,0 +1,23 @@
+<div class="toolbar mono">
+  <span>Entries: {{ (result()!.entries.length) }}</span>
+  <span>Diff: {{ result()!.diffCount }}</span>
+  <span>Same: {{ result()!.sameCount }}</span>
+</div>
+
+
+<div class="grid">
+  <div class="card"><pre class="mono">{{ left | json }}</pre></div>
+  <div class="card"><pre class="mono">{{ right | json }}</pre></div>
+</div>
+
+
+<div class="list">
+  <h4>Flattened {{ filter }} list</h4>
+  <div *ngFor="let e of filtered()" [ngClass]="'diff-' + e.kind">
+    <div class="mono">{{ e.kind.toUpperCase() }} &#64; {{ e.path.join('.') || '(root)' }}</div>
+    <div class="mono">L: {{ e.a | json }}</div>
+    <div class="mono">R: {{ e.b | json }}</div>
+    <hr />
+  </div>
+  <div *ngIf="!filtered().length">No items</div>
+</div>

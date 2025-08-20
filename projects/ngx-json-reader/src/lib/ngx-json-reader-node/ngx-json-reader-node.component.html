@@ -1,0 +1,50 @@
+<details [open]="expanded">
+  <summary>
+    <span class="key">{{ label }}</span>
+    <ng-container [ngSwitch]="type">
+      <span *ngSwitchCase="'object'">{{ keys.length }}</span>
+      <span *ngSwitchCase="'array'">[ {{ value?.length }} ]</span>
+      <span *ngSwitchDefault class="mono">= {{ value | json }}</span>
+    </ng-container>
+  </summary>
+
+
+  <div *ngIf="type==='object'" class="pl-4">
+    <div class="kv" *ngFor="let k of keys; let i = index">
+      <ngx-ngx-json-reader-node
+        [label]="k"
+        [value]="value[k]"
+        [path]="path ? path?.join(k) : path"
+        [editable]="editable"
+        (valueChange)="valueChange.emit($event)"
+        (delete)="delete.emit($event)"
+      />
+    </div>
+    <div *ngIf="editable" class="kv">
+      <button type="button" (click)="addObjectProp()">+ add property</button>
+    </div>
+  </div>
+
+
+  <div *ngIf="type==='array'" class="pl-4">
+    <div class="kv" *ngFor="let item of value; let i = index">
+      <ngx-ngx-json-reader-node
+        [label]="i"
+        [value]="item"
+        [path]="path ? path?.join(i) : path"
+        [editable]="editable"
+        (valueChange)="valueChange.emit($event)"
+        (delete)="delete.emit($event)"
+      />
+      <button *ngIf="editable" type="button" (click)="onDelete(i, item)">Delete</button>
+    </div>
+    <div *ngIf="editable" class="kv">
+      <button type="button" (click)="addArrayItem()">+ push item</button>
+    </div>
+  </div>
+
+
+  <div *ngIf="type==='primitive' && editable" class="pl-4">
+    <input class="val" [value]="value" (change)="onInput($event)" />
+  </div>
+</details>
