@@ -1,9 +1,9 @@
-<details [open]="expanded">
+<details [open]="expanded" [attr.data-colection-index]="collectionIndex">
   <summary>
     <span class="key">{{ label }}</span>
     <ng-container [ngSwitch]="type">
-      <span *ngSwitchCase="'object'">{{ keys.length }}</span>
-      <span *ngSwitchCase="'array'">[ {{ value?.length }} ]</span>
+      <span *ngSwitchCase="'object'" class="object">({{ keys.length }})</span>
+      <span *ngSwitchCase="'array'" class="array">({{ value?.length }})</span>
       <span *ngSwitchDefault class="mono">= {{ value | json }}</span>
     </ng-container>
   </summary>
@@ -14,7 +14,8 @@
       <ngx-ngx-json-reader-node
         [label]="k"
         [value]="value[k]"
-        [path]="path ? path?.join(k) : path"
+        [path]="makePath(k)"
+        [collectionIndex]="collectionIndex"
         [editable]="editable"
         (valueChange)="valueChange.emit($event)"
         (delete)="delete.emit($event)"
@@ -31,7 +32,8 @@
       <ngx-ngx-json-reader-node
         [label]="i"
         [value]="item"
-        [path]="path ? path?.join(i) : path"
+        [path]="makePath(i)"
+        [collectionIndex]="collectionIndex"
         [editable]="editable"
         (valueChange)="valueChange.emit($event)"
         (delete)="delete.emit($event)"

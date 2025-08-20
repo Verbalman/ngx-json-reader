@@ -1,6 +1,10 @@
 import { JsonPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgxJsonReaderValue } from '../types';
+import {
+  NgxJsonReaderNodeDeleteEmit,
+  NgxJsonReaderNodeValueChangeEmit,
+  NgxJsonReaderValue,
+} from '../types';
 
 @Component({
   selector: 'ngx-ngx-json-reader-node',
@@ -19,12 +23,13 @@ import { NgxJsonReaderValue } from '../types';
 export class NgxJsonReaderNodeComponent {
   @Input() label!: string | number;
   @Input() value!: NgxJsonReaderValue | any;
-  @Input() path: (string|number)[] | any = [];
+  @Input() path: (number | string)[] = [];
+  @Input() collectionIndex!: number;
   @Input() expanded = false;
   @Input() editable = true;
 
-  @Output() valueChange = new EventEmitter<{ path:(string|number)[]; previous:any; current:any }>();
-  @Output() delete = new EventEmitter<{ path:(string|number)[]; previous:any }>();
+  @Output() valueChange = new EventEmitter<NgxJsonReaderNodeValueChangeEmit>();
+  @Output() delete = new EventEmitter<NgxJsonReaderNodeDeleteEmit>();
 
 
   get type(): 'object'|'array'|'primitive' {
@@ -34,6 +39,9 @@ export class NgxJsonReaderNodeComponent {
   }
   get keys(): string[] { return this.type==='object' ? Object.keys(this.value as any) : []; }
 
+  makePath(item: string | number) {
+    return [...this.path, item.toString()];
+  }
 
   onInput(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -43,12 +51,21 @@ export class NgxJsonReaderNodeComponent {
     if (/^-?\d+(\.\d+)?$/.test(raw)) next = Number(raw);
     if (raw === 'true' || raw === 'false') next = raw === 'true';
     if (raw === 'null') next = null;
-    this.valueChange.emit({ path: this.path, previous: prev, current: next });
+    this.valueChange.emit({
+      path: this.path,
+      previous: prev,
+      current: next,
+      collectionIndex: this.collectionIndex,
+    });
   }
 
 
   onDelete(index: number, prev: any) {
-    this.delete.emit({ path: [...this.path, index], previous: prev });
+    this.delete.emit({
+      path: [...this.path, index],
+      previous: prev,
+      collectionIndex: this.collectionIndex,
+    });
   }
 
 
@@ -57,13 +74,25 @@ export class NgxJsonReaderNodeComponent {
     if (!key) return;
     const prev = (this.value as any)[key];
     if (prev !== undefined) return alert('Key already exists');
-    this.valueChange.emit({ path: [...this.path, key], previous: undefined, current: '' });
+    this.valueChange.emit({
+      path: [...this.path, key],
+      previous: undefined,
+      current: '',
+      collectionIndex: this.collectionIndex,
+    });
   }
 
 
   addArrayItem() {
     const arr = Array.isArray(this.value) ? [...(this.value as any[])] : [];
     arr.push('');
-    this.valueChange.emit({ path: this.path, previous: this.value, current: arr });
+    this.valueChange.emit({
+      path: this.path,
+      previous: this.value,
+      current: arr,
+      collectionIndex: this.collectionIndex,
+    });
   }
+
+  protected readonly Array = Array;
 }

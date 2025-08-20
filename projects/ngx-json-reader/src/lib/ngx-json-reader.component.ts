@@ -1,27 +1,23 @@
-import { JsonPipe, NgIf } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, computed, effect, EventEmitter, inject, Input, Output, signal, Signal } from '@angular/core';
-import { NgxJsonReaderCompareComponent } from './ngx-json-reader-compare/ngx-json-reader-compare.component';
 import { NgxJsonReaderNodeComponent } from './ngx-json-reader-node/ngx-json-reader-node.component';
 import {
   NgxJsonReaderChangeEvent,
   NgxJsonReaderDiffResult,
-  NgxJsonReaderFilter,
   NgxJsonReaderHeaders,
+  NgxJsonReaderNodeDeleteEmit,
+  NgxJsonReaderNodeValueChangeEmit,
   NgxJsonReaderSrcUrls,
   NgxJsonReaderValue,
   NgxJsonReaderViewMode,
 } from './types';
-import { updateAtPath } from './utils';
+import { deleteAtPath, updateAtPath } from './utils';
 
 @Component({
   selector: 'ngx-ngx-json-reader',
   standalone: true,
   imports: [
-    NgIf,
     NgxJsonReaderNodeComponent,
-    NgxJsonReaderCompareComponent,
-    JsonPipe
   ],
   templateUrl: './ngx-json-reader.component.html',
   styleUrl: 'ngx-json-reader.component.scss',
@@ -35,18 +31,17 @@ export class NgxJsonReaderComponent {
   @Input() data?: NgxJsonReaderValue | NgxJsonReaderValue[];
 
   @Input() editable = true;
-  @Input() rootLabel = 'Test Test';
   @Input() expanded = true;
-  @Input() downloadFilename = 'data.json';
-  @Input() viewMode = NgxJsonReaderViewMode.TREE;
-  @Input() filter = NgxJsonReaderFilter.ALL;
+
+  @Input() rootLabel = '__DATA__';
+  @Input() downloadFilename: string | string[] = 'data.json';
 
   @Output() dataChange = new EventEmitter<NgxJsonReaderChangeEvent>();
   @Output() diffComputed = new EventEmitter<NgxJsonReaderDiffResult>();
   @Output() error = new EventEmitter<any>();
 
-
   #collection = signal<NgxJsonReaderValue>([]);
+
   collection = computed<NgxJsonReaderValue[]>(() => {
     const collection = this.#collection();
     if (!collection) {
@@ -64,37 +59,119 @@ export class NgxJsonReaderComponent {
     return []
   });
 
-  mode: Signal<NgxJsonReaderViewMode> = computed(() => this.viewMode);
-
-  sizeStr: Signal<string | null> = computed(() => {
-    const urls = this.srcUrls;
-    const collection = this.collection();
-    let result = '';
-
+  sizeStr: Signal<string> = computed(() => {
     try {
-      if (urls?.length && collection?.length) {
+      const collection = this.collection();
+      if (!collection?.length) {
+        return '';
+      }
+
+      let result = '';
+      const urls = this.srcUrls;
+      const staticData = this.#getStaticData();
+
+      if (urls?.length) {
         for (let i = 0; i < urls.length; i++) {
           result += `${urls[i]}: ${new Blob([JSON.stringify(collection[i])]).size ?? 0} B \n`;
+        }
+      } else if (staticData.length) {
+        for (let i = 0; i < staticData.length; i++) {
+          result += `Set ${i + 1}: ${new Blob([JSON.stringify(collection[i])]).size ?? 0} B \n`;
         }
       }
       return result;
     } catch (e) {
-      return null;
+      return '';
     }
   });
 
   constructor() {
     effect(() => {
       const urls = this.srcUrls;
-      const staticData = this.data;
+      const staticData = this.#getStaticData();
 
       if (urls?.length) {
         this.#fetchMany(urls, this.srcHeaders);
-      } else if (staticData && Array.isArray(staticData)) {
-        this.#collection.set(staticData);
-      } else if (staticData) {
-        this.#collection.set([staticData]);
+      } else {
+        this.#setToCollection(staticData);
       }
+    });
+  }
+
+  download(index: number) {
+    try {
+      let name = (this.downloadFilename && Array.isArray(this.downloadFilename)) ? this.downloadFilename[index] : this.downloadFilename;
+      const collectionItem = this.collection()[index];
+
+      if (!name.endsWith('.json')) {
+        name += `.json`;
+      }
+
+      const blob = new Blob([JSON.stringify(collectionItem, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (error) {
+      console.error("Cannot download file!", error);
+    }
+  }
+
+  onValueChange(event: NgxJsonReaderNodeValueChangeEmit) {
+    console.log("event", event);
+    const {
+      path,
+      current,
+      previous,
+      collectionIndex,
+    } = event;
+    const collectionItem = this.collection()[collectionIndex];
+    const updated = updateAtPath(collectionItem, path, current);
+    const newCollection = [...this.collection()];
+    newCollection[collectionIndex] = updated;
+    this.#collection.set(newCollection);
+    this.dataChange.emit({
+      message: "Updated",
+      // options: event,
+    });
+  }
+
+  onDelete(event: NgxJsonReaderNodeDeleteEmit) {
+    const {
+      collectionIndex,
+      previous,
+      path,
+    } = event;
+    const collectionItem = this.collection()[collectionIndex];
+    const updated = deleteAtPath(collectionItem, path);
+    const newCollection = [...this.collection()];
+    newCollection[collectionIndex] = updated;
+    this.#collection.set(newCollection);
+    this.dataChange.emit({
+      message: "Delete",
+      // options: event,
+    });
+  }
+
+  expandAll() { document.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = true); }
+  collapseAll() { document.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = false); }
+
+  #getStaticData() {
+    const staticData = this.data;
+
+    if (staticData && Array.isArray(staticData)) {
+      return staticData;
+    } else if (staticData) {
+      return [staticData];
+    }
+
+    return [];
+  }
+
+  #setToCollection(data: NgxJsonReaderValue) {
+    Promise.resolve().then(() => {
+      this.#collection.set(data);
     });
   }
 
@@ -109,48 +186,7 @@ export class NgxJsonReaderComponent {
       })
       .catch((error) => {
         console.error("Cannot fetch data!", error);
+        this.error.emit()
       });
   }
-
-  download(index?: number) {
-    // const m = this.mode();
-    // let content: any;
-    // let name = this.downloadFilename;
-    // if (m === 'tree') content = this.#rootSig();
-    // else {
-    //   const i = index ?? 0;
-    //   content = this.#roots()[i];
-    //   if (!name.endsWith('.json')) name += `.json`;
-    //   name = (i === 0 ? 'left-' : 'right-') + name;
-    // }
-    // const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
-    // const a = document.createElement('a');
-    // a.href = URL.createObjectURL(blob);
-    // a.download = name;
-    // a.click();
-    // URL.revokeObjectURL(a.href);
-  }
-
-  onValueChange(e: { path: (string|number)[]; previous: any; current: any; }, index: number) {
-    if (this.mode() !== 'tree') return; // editing only in single-tree mode
-    const updated = updateAtPath(this.collection()[index], e.path, e.current);
-    console.log("updated", updated);
-    // @ts-ignore
-    const newCollection = [...this.#collection()];
-    newCollection[index] = updated;
-    this.#collection.set(newCollection);
-
-    // this.#rootSig.set(updated);
-    // this.dataChange.emit({ ...e, root: updated });
-  }
-
-  onDelete(e: { path: (string|number)[]; previous: any; }) {
-    // if (this.mode() !== 'tree') return;
-    // const updated = deleteAtPath(this.#rootSig(), e.path);
-    // this.#rootSig.set(updated);
-    // this.dataChange.emit({ path: e.path, previous: e.previous, current: undefined as any, root: updated });
-  }
-
-  expandAll() { document.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = true); }
-  collapseAll() { document.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = false); }
 }

@@ -1,5 +1,7 @@
+export interface NgxJsonReaderObject {
+  [k: string]: NgxJsonReaderValue;
+}
 
-export interface NgxJsonReaderObject { [k: string]: NgxJsonReaderValue }
 export type NgxJsonReaderPrimitive = string | number | boolean | null;
 export type NgxJsonReaderArray = NgxJsonReaderValue[];
 
@@ -21,21 +23,42 @@ export enum NgxJsonReaderFilter {
 }
 
 export interface NgxJsonReaderChangeEvent {
-  path: (string | number)[];
-  previous: NgxJsonReaderValue | undefined;
-  current: NgxJsonReaderValue | undefined;
-  root: NgxJsonReaderValue;
+  message: string;
+  options?: {
+    path: (string | number)[];
+    previous: NgxJsonReaderValue | undefined;
+    current: NgxJsonReaderValue | undefined;
+    collectionIndex: number;
+  }
 }
 
 
 export interface NgxJsonReaderDiffEntry {
-  path: (string|number)[];
+  path: (string | number)[];
   a?: NgxJsonReaderValue; // left
   b?: NgxJsonReaderValue; // right
   kind: 'added' | 'removed' | 'changed' | 'same';
 }
+
 export interface NgxJsonReaderDiffResult {
-  entries: NgxJsonReaderDiffEntry[];
-  sameCount: number;
-  diffCount: number;
+  message: string;
+  options: {
+    entries: NgxJsonReaderDiffEntry[];
+    sameCount: number;
+    diffCount: number;
+    collectionIndex: number;
+  }
+}
+
+export interface NgxJsonReaderNodeValueChangeEmit {
+  path: (string | number)[];
+  previous: any;
+  current: any;
+  collectionIndex: number;
+}
+
+export interface NgxJsonReaderNodeDeleteEmit {
+  path: (string | number)[];
+  previous: any;
+  collectionIndex: number;
 }
