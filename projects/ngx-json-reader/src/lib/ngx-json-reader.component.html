@@ -1,13 +1,15 @@
 <div class="ngx-jr-main">
   <header class="ngx-jr-header">
-    @if (sizeStr(); as sizeStr) {
-      <div class="ngx-jr-data-size">{{ sizeStr }}</div>
-    }
-
-    <div class="">
-      <button type="button" (click)="expandAll()">Expand All</button>
-      <button type="button" (click)="collapseAll()">Collapse All</button>
-    </div>
+    <button
+      type="button"
+      class="ngx-jr-btn"
+      (click)="expandAll()"
+    >Expand All</button>
+    <button
+      type="button"
+      class="ngx-jr-btn"
+      (click)="collapseAll()"
+    >Collapse All</button>
   </header>
 
   <section class="ngx-jr-container">
@@ -15,15 +17,24 @@
       @if (collection().length > 0) {
         @for (item of collection(); let index = $index; track index;) {
           <div class="ngx-jr-content-item" [attr.data-colection-index]="index">
-            <div class="">
-              <button type="button" (click)="download(index)">Download</button>
+            <div class="ngx-jr-content-header">
+              <div>
+                <button
+                  type="button"
+                  class="ngx-jr-btn"
+                  (click)="download(index)"
+                >Download</button>
+              </div>
+
+              <span class="ngx-jr-content-item-size">Size: {{ getSetSize(index) }}</span>
             </div>
             <ngx-ngx-json-reader-node
-              [label]="rootLabel"
+              [label]="getRootLabel(index)"
               [value]="item"
               [path]="[]"
               [collectionIndex]="index"
               [expanded]="expanded"
+              [modified]="modified"
               [editable]="editable"
               (valueChange)="onValueChange($event)"
               (delete)="onDelete($event)"

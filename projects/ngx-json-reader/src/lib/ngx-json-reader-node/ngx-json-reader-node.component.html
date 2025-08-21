@@ -1,67 +1,84 @@
-<details [open]="expanded" [attr.data-colection-index]="collectionIndex">
-  <summary>
-    <span class="key">{{ label }}</span>
-    @switch(type) {
-      @case (valueType.OBJECT) {
-        <span class="object">({{ keys.length }})</span>
-      }
-      @case (valueType.ARRAY) {
-        <span class="array">({{ value?.length }})</span>
-      }
-      @default {
-        <span class="mono">= {{ value | json }}</span>
-      }
-    }
-  </summary>
+<div class="ngx-jr-details-wrapper">
+  @if (type === valueType.PRIMITIVE) {
+    <div class="">
+      <span class="ngx-jr-details-label">{{ label }}: </span>
+      <span class="ngx-jr-details-current-value">{{ value | json }}</span>
 
-  @if (type === valueType.OBJECT) {
-    <div class="pl-4">
-      @for (k of keys; let index = $index; track index) {
-        <div class="kv">
-          <ngx-ngx-json-reader-node
-            [label]="k"
-            [value]="value[k]"
-            [path]="makePath(k)"
-            [collectionIndex]="collectionIndex"
-            [editable]="editable"
-            (valueChange)="valueChange.emit($event)"
-            (delete)="delete.emit($event)"
-          />
-        </div>
-      }
       @if (editable) {
-        <div class="kv">
-          <button type="button" (click)="addObjectProp()">+ add property</button>
+        <div>
+          <input type="text" class="ngx-jr-input" [value]="value" (change)="onInput($event)" />
         </div>
       }
     </div>
-  } @else if (type === valueType.ARRAY) {
-    <div class="pl-4">
-      @for (item of value; let index = $index; track index) {
-        <div class="kv">
-          <ngx-ngx-json-reader-node
-            [label]="index"
-            [value]="item"
-            [path]="makePath(index)"
-            [collectionIndex]="collectionIndex"
-            [editable]="editable"
-            (valueChange)="valueChange.emit($event)"
-            (delete)="delete.emit($event)"
-          />
-          @if (editable) {
-            <button type="button" (click)="onDelete(index, item)">Delete</button>
+  } @else {
+    <details
+      class="ngx-jr-details"
+      [attr.open]="expanded ? true : null"
+    >
+      <summary>
+        @switch(type) {
+          @case (valueType.OBJECT) {
+            <span class="ngx-jr-details-label">{{ label }}</span>
+            <span class="ngx-jr-details-type-marker"> &#123; {{ keys.length }} &#125;</span>
+          }
+          @case (valueType.ARRAY) {
+            <span class="ngx-jr-details-label">{{ label }}</span>
+            <span class="ngx-jr-details-type-marker"> [{{ value?.length }}]</span>
+          }
+        }
+      </summary>
+
+      @if (type === valueType.OBJECT) {
+        <div class="ngx-jr-details-content">
+          @for (k of keys; let index = $index; track index) {
+            <ngx-ngx-json-reader-node
+              [label]="k"
+              [value]="value[k]"
+              [path]="makePath(k)"
+              [collectionIndex]="collectionIndex"
+              [expanded]="expanded"
+              [modified]="modified"
+              [editable]="editable"
+              (valueChange)="valueChange.emit($event)"
+              (delete)="delete.emit($event)"
+            />
+          }
+          @if (modified) {
+            <div class="kv">
+              <button type="button" (click)="addObjectProp()">+ add property</button>
+            </div>
+          }
+        </div>
+      } @else if (type === valueType.ARRAY) {
+        <div class="ngx-jr-details-content">
+          @for (item of value; let index = $index; track index) {
+            <ngx-ngx-json-reader-node
+              [label]="index"
+              [value]="item"
+              [path]="makePath(index)"
+              [collectionIndex]="collectionIndex"
+              [expanded]="expanded"
+              [modified]="modified"
+              [editable]="editable"
+              (valueChange)="valueChange.emit($event)"
+              (delete)="delete.emit($event)"
+            />
+            @if (modified) {
+              <button type="button" (click)="onDelete(index, item)">Delete</button>
+            }
+          }
+          @if (modified) {
+            <div class="kv">
+              <button type="button" (click)="addArrayItem()">+ push item</button>
+            </div>
           }
         </div>
       }
-      @if (editable) {
-        <div class="kv">
-          <button type="button" (click)="addArrayItem()">+ push item</button>
-        </div>
-      }
-    </div>
-  } @else if (type === valueType.PRIMITIVE && editable) {
-    <div class="pl-4">
-      <input class="val" [value]="value" (change)="onInput($event)" />
-    </div>
+<!--      @else if (type === valueType.PRIMITIVE && editable) {-->
+<!--        <div class="ngx-jr-details-content">-->
+<!--          <input class="val" [value]="value" (change)="onInput($event)" />-->
+<!--        </div>-->
+<!--      }-->
+    </details>
   }
-</details>
+</div>

@@ -23,8 +23,10 @@ export class NgxJsonReaderNodeComponent {
   @Input() value!: NgxJsonReaderValue | any;
   @Input() path: NgxJsonReaderCollectionPath = [];
   @Input() collectionIndex!: number;
-  @Input() expanded = false;
+
   @Input() editable = true;
+  @Input() modified = false;
+  @Input() expanded = false;
 
   @Output() valueChange = new EventEmitter<NgxJsonReaderNodeValueChangeEmit>();
   @Output() delete = new EventEmitter<NgxJsonReaderNodeDeleteEmit>();

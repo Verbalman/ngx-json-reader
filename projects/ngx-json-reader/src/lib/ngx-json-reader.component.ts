@@ -23,15 +23,17 @@ import { deleteAtPath, updateAtPath } from './utils';
 })
 export class NgxJsonReaderComponent {
   #http = inject(HttpClient);
+  readonly #defaultRootLabel = '__root__';
 
   @Input() srcUrls?: NgxJsonReaderSrcUrls;
   @Input() srcHeaders?: NgxJsonReaderHeaders;
   @Input() data?: NgxJsonReaderData;
 
   @Input() editable = true;
+  @Input() modified = false;
   @Input() expanded = true;
 
-  @Input() rootLabel = '__DATA__';
+  @Input() rootLabel?: string;
   @Input() downloadFilename: string | string[] = 'data.json';
 
   @Output() dataChange = new EventEmitter<NgxJsonReaderChangeEvent>();
@@ -56,32 +58,6 @@ export class NgxJsonReaderComponent {
     return []
   });
 
-  sizeStr: Signal<string> = computed(() => {
-    try {
-      const collection = this.collection();
-      if (!collection?.length) {
-        return '';
-      }
-
-      let result = '';
-      const urls = this.srcUrls;
-      const staticData = this.#getStaticData();
-
-      if (urls?.length) {
-        for (let i = 0; i < urls.length; i++) {
-          result += `${urls[i]}: ${new Blob([JSON.stringify(collection[i])]).size ?? 0} B \n`;
-        }
-      } else if (staticData.length) {
-        for (let i = 0; i < staticData.length; i++) {
-          result += `Set ${i + 1}: ${new Blob([JSON.stringify(collection[i])]).size ?? 0} B \n`;
-        }
-      }
-      return result;
-    } catch (e) {
-      return '';
-    }
-  });
-
   constructor() {
     effect(() => {
       const urls = this.srcUrls;
@@ -93,6 +69,32 @@ export class NgxJsonReaderComponent {
         this.#setToCollection(staticData);
       }
     });
+  }
+
+  getSetSize(index: number) {
+    const collection = this.collection();
+    const collectionItem = collection[index];
+    try {
+      return `${new Blob([JSON.stringify(collectionItem)]).size ?? 0} B \n`;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  getRootLabel(index: number) {
+    if (this.rootLabel) {
+      return this.rootLabel;
+    }
+
+    if (Array.isArray(this.downloadFilename) && this.downloadFilename.length) {
+      return this.downloadFilename[index];
+    }
+
+    if (this.srcUrls?.length) {
+      return this.srcUrls[index];
+    }
+
+    return this.#defaultRootLabel;
   }
 
   download(index: number) {
@@ -116,7 +118,6 @@ export class NgxJsonReaderComponent {
   }
 
   onValueChange(event: NgxJsonReaderNodeValueChangeEmit) {
-    console.log("event", event);
     const {
       path,
       current,
