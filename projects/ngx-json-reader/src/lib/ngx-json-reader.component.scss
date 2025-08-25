@@ -30,6 +30,8 @@
     z-index: 1;
     position: sticky;
     top: 0;
+    display: flex;
+    gap: 0.625rem;
     width: 100%;
     padding: 0.625rem;
     border-bottom: 0.0625rem solid var(--divider-color);
@@ -54,11 +56,17 @@
       justify-content: space-between;
       gap: 0.625rem;
       padding: 0.625rem 0 0;
+
+      &-actions {
+        display: flex;
+        gap: 0.625rem;
+      }
     }
 
     &-item {
       flex: 1 1 100%;
       max-width: 50%;
+      min-width: 420px;
       padding: 0 0.875rem 0.625rem;
       background-color: var(--bg-color);
       border: 0.0625rem solid var(--divider-color);
@@ -77,27 +85,5 @@
         white-space: break-spaces;
       }
     }
-  }
-
-  &-btn {
-    cursor: pointer;
-    padding: 0.125rem 0.5rem;
-    border: 0.0625rem solid var(--primary-color);
-    background-color: var(--white-color);
-    border-radius: 0.25rem;
-    font-size: 0.625rem;
-    font-weight: 500;
-    font-family: var(--ngx-jr-font-family), serif;
-    color: var(--primary-color);
-
-    &:hover,
-    &:active {
-      color: var(--dark-primary-color);
-      border-color: var(--dark-primary-color);
-    }
-  }
-
-  &-btn + &-btn {
-    margin-left: 0.625rem;
   }
 }

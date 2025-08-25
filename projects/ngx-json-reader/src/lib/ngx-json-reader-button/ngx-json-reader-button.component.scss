@@ -1,0 +1,21 @@
+:host {
+  display: contents;
+}
+
+.ngx-jr-btn {
+  cursor: pointer;
+  padding: 0.125rem 0.5rem;
+  border: 0.0625rem solid var(--primary-color);
+  background-color: var(--white-color);
+  border-radius: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 500;
+  font-family: var(--ngx-jr-font-family), serif;
+  color: var(--primary-color);
+
+  &:hover,
+  &:active {
+    color: var(--dark-primary-color);
+    border-color: var(--dark-primary-color);
+  }
+}

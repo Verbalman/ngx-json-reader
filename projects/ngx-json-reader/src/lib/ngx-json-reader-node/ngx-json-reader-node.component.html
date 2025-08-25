@@ -45,7 +45,7 @@
           }
           @if (modified) {
             <div class="kv">
-              <button type="button" (click)="addObjectProp()">+ add property</button>
+              <ngx-json-reader-button label="Add" (actionClick)="addObjectProp()" />
             </div>
           }
         </div>
@@ -64,12 +64,12 @@
               (delete)="delete.emit($event)"
             />
             @if (modified) {
-              <button type="button" (click)="onDelete(index, item)">Delete</button>
+              <ngx-json-reader-button label="Delete" (actionClick)="onDelete(index, item)" />
             }
           }
           @if (modified) {
             <div class="kv">
-              <button type="button" (click)="addArrayItem()">+ push item</button>
+              <ngx-json-reader-button label="Push" (actionClick)="addArrayItem()" />
             </div>
           }
         </div>

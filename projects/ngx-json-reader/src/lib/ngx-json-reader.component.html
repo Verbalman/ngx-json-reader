@@ -1,29 +1,23 @@
 <div class="ngx-jr-main">
   <header class="ngx-jr-header">
-    <button
-      type="button"
-      class="ngx-jr-btn"
-      (click)="expandAll()"
-    >Expand All</button>
-    <button
-      type="button"
-      class="ngx-jr-btn"
-      (click)="collapseAll()"
-    >Collapse All</button>
+    <ngx-json-reader-button label="Expand All" (actionClick)="expandAll()" />
+    <ngx-json-reader-button label="Collapse All" (actionClick)="collapseAll()" />
   </header>
 
   <section class="ngx-jr-container">
     <div class="ngx-jr-content">
       @if (collection().length > 0) {
         @for (item of collection(); let index = $index; track index;) {
-          <div class="ngx-jr-content-item" [attr.data-colection-index]="index">
+          <div
+            #collectionElement
+            class="ngx-jr-content-item"
+            [attr.data-colection-index]="index"
+          >
             <div class="ngx-jr-content-header">
-              <div>
-                <button
-                  type="button"
-                  class="ngx-jr-btn"
-                  (click)="download(index)"
-                >Download</button>
+              <div class="ngx-jr-content-header-actions">
+                <ngx-json-reader-button label="Download" (actionClick)="download(index)" />
+                <ngx-json-reader-button label="Expand" (actionClick)="expandOneCollection(index)" />
+                <ngx-json-reader-button label="Collapse" (actionClick)="collapseOneCollection(index)" />
               </div>
 
               <span class="ngx-jr-content-item-size">Size: {{ getSetSize(index) }}</span>

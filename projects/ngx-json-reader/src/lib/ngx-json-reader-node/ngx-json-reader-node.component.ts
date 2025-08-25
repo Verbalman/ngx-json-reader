@@ -1,5 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { NgxJsonReaderButtonComponent } from '../ngx-json-reader-button/ngx-json-reader-button.component';
 import {
   NgxJsonReaderChangeEventType,
   NgxJsonReaderCollectionPath,
@@ -13,7 +14,8 @@ import {
   selector: 'ngx-ngx-json-reader-node',
   standalone: true,
   imports: [
-    JsonPipe
+    JsonPipe,
+    NgxJsonReaderButtonComponent
   ],
   templateUrl: './ngx-json-reader-node.component.html',
   styleUrl: './ngx-json-reader-node.component.scss'
