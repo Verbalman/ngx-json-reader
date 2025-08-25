@@ -1,6 +1,6 @@
 {
   "name": "ngx-json-reader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Oleg Kasianets",
   "description": "Angular 17+ JSON reader/editor with multi-URL compare & diff",
   "license": "MIT",
