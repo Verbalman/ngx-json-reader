@@ -30,21 +30,33 @@ import { JsonReaderComponent } from 'ngx-json-reader';
     <!-- Single JSON, editable -->
     <ngx-json-reader
       [data]="{ hello: 'world', list: [1,2,3] }"
-      [editable]="true"
-      viewMode="tree">
-    </ngx-json-reader>
+      [editable]="false"
+    />
 
     <!-- Compare two JSONs -->
     <ngx-json-reader
-      [data]="[leftJson, rightJson]"
-      viewMode="compare"
-      filter="diff">
-    </ngx-json-reader>
+      [data]="[fisrt, second]"
+      [downloadFilename]="downloadFilename"
+    />
+    
+    <!-- Load from URLs -->
+    <ngx-json-reader
+      [srcUrls]="srcUrls"
+      [downloadFilename]="downloadFilename"
+    />
   `
 })
 export class AppComponent {
-  leftJson = { a: 1, b: { x: 10, y: [1,2] } };
-  rightJson = { a: 1, b: { x: 11, y: [1,2,3] }, d: null };
+  fisrt = { a: 1, b: { x: 10, y: [1,2] } };
+  second = { a: 1, b: { x: 11, y: [1,2,3] }, d: null };
+  srcUrls = [
+    './some/path/one.json',
+    './some/path/two.json',
+  ];
+  downloadFilename = [
+    'new-one.json',
+    'new-two.json',
+  ];
 }
 ```
 
