@@ -1,6 +1,13 @@
 {
   "name": "ngx-json-reader",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "author": "Oleg Kasianets",
+  "description": "Angular 17+ JSON reader/editor with multi-URL compare & diff",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Verbalman/ngx-json-reader.git"
+  },
   "type": "module",
   "peerDependencies": {
     "@angular/common": "^17.3.0",

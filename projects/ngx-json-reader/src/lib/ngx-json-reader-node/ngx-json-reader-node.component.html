@@ -31,7 +31,7 @@
       @if (type === valueType.OBJECT) {
         <div class="ngx-jr-details-content">
           @for (k of keys; let index = $index; track index) {
-            <ngx-ngx-json-reader-node
+            <ngx-json-reader-node
               [label]="k"
               [value]="value[k]"
               [path]="makePath(k)"
@@ -52,7 +52,7 @@
       } @else if (type === valueType.ARRAY) {
         <div class="ngx-jr-details-content">
           @for (item of value; let index = $index; track index) {
-            <ngx-ngx-json-reader-node
+            <ngx-json-reader-node
               [label]="index"
               [value]="item"
               [path]="makePath(index)"

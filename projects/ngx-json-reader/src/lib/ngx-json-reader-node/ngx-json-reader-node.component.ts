@@ -11,7 +11,7 @@ import {
 } from '../types';
 
 @Component({
-  selector: 'ngx-ngx-json-reader-node',
+  selector: 'ngx-json-reader-node',
   standalone: true,
   imports: [
     JsonPipe,

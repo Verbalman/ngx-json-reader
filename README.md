@@ -1,27 +1,65 @@
-# NgxJsonReaderWorkspace
+# NgxJsonReader
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.4.
+**ngx-json-reader** is a lightweight Angular 17+ library for working with JSON in your applications.
+It provides a standalone component that can:
 
-## Development server
+- Load JSON from URLs or directly from data inputs
+- Render tree view with expand/collapse and inline editing
+- Compare multiple JSON sources side-by-side
+- Download JSON back to file
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Perfect for developer tools, admin dashboards, or any Angular app that needs an interactive JSON viewer/editor.
 
-## Code scaffolding
+## Installation
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
+npm install ngx-json-reader
+```
 
-## Build
+## Example usage
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```typescript
+import { Component } from '@angular/core';
+import { JsonReaderComponent } from 'ngx-json-reader';
 
-## Running unit tests
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [JsonReaderComponent],
+  template: `
+    <!-- Single JSON, editable -->
+    <ngx-json-reader
+      [data]="{ hello: 'world', list: [1,2,3] }"
+      [editable]="true"
+      viewMode="tree">
+    </ngx-json-reader>
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+    <!-- Compare two JSONs -->
+    <ngx-json-reader
+      [data]="[leftJson, rightJson]"
+      viewMode="compare"
+      filter="diff">
+    </ngx-json-reader>
+  `
+})
+export class AppComponent {
+  leftJson = { a: 1, b: { x: 10, y: [1,2] } };
+  rightJson = { a: 1, b: { x: 11, y: [1,2,3] }, d: null };
+}
+```
 
-## Running end-to-end tests
+## Inputs / Outputs
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Inputs
 
-## Further help
+- `srcUrls?: string[]`: load JSONs from URLs
+- `srcHeaders?: Record<string, string>`: headers for load JSONs from URLs
+- `data?: unknown | unknown[]`: single or multiple JSON objects
+- `editable = true`: enable inline editing
+- `modified = false`: enable add/remove action
+- `expanded = true`: expand all JSONs by default
+- `downloadFilename: string | string[] = 'data.json'`: filename when downloading
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Outputs
+
+- `dataChange`: emits on JSON edits

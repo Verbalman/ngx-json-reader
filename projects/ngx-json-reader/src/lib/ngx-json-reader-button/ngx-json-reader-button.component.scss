@@ -5,17 +5,17 @@
 .ngx-jr-btn {
   cursor: pointer;
   padding: 0.125rem 0.5rem;
-  border: 0.0625rem solid var(--primary-color);
-  background-color: var(--white-color);
+  border: 0.0625rem solid var(--ngx-jr-primary-color);
+  background-color: var(--ngx-jr-white-color);
   border-radius: 0.25rem;
   font-size: 0.625rem;
   font-weight: 500;
-  font-family: var(--ngx-jr-font-family), serif;
-  color: var(--primary-color);
+  font-family: var(--ngx-jr-ngx-jr-font-family), serif;
+  color: var(--ngx-jr-primary-color);
 
   &:hover,
   &:active {
-    color: var(--dark-primary-color);
-    border-color: var(--dark-primary-color);
+    color: var(--ngx-jr-dark-primary-color);
+    border-color: var(--ngx-jr-dark-primary-color);
   }
 }

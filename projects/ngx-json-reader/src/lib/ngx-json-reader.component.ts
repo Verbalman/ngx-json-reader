@@ -14,7 +14,7 @@ import {
 import { deleteAtPath, updateAtPath } from './utils';
 
 @Component({
-  selector: 'ngx-ngx-json-reader',
+  selector: 'ngx-json-reader',
   standalone: true,
   imports: [
     NgxJsonReaderNodeComponent,

@@ -1,14 +1,14 @@
 :host {
   --ngx-jr-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, -apple-system, system-ui, "Liberation Mono", "Courier New", Apple Color Emoji, monospace;
-  --dark-primary-color: #303f9f;
-  --lignt-primary-color: #C5CAE9;
-  --primary-color: #3F51B5;
-  --accent-color: #FFC107;
-  --primary-text-color: #212121;
-  --secondary-text-color: #757575;
-  --divider-color: #BDBDBD;
-  --bg-color: #FAFAFA;
-  --white-color: #FFFFFF;
+  --ngx-jr-dark-primary-color: #303f9f;
+  --ngx-jr-lignt-primary-color: #C5CAE9;
+  --ngx-jr-primary-color: #3F51B5;
+  --ngx-jr-accent-color: #FFC107;
+  --ngx-jr-primary-text-color: #212121;
+  --ngx-jr-secondary-text-color: #757575;
+  --ngx-jr-divider-color: #BDBDBD;
+  --ngx-jr-bg-color: #FAFAFA;
+  --ngx-jr-white-color: #FFFFFF;
 
   display: block;
   font-size: 16px;
@@ -20,6 +20,7 @@
   &-main {
     width: 100%;
     font-family: var(--ngx-jr-font-family), serif;
+    background-color: var(--ngx-jr-white-color);
 
     ::ng-deep * {
       box-sizing: border-box;
@@ -34,8 +35,8 @@
     gap: 0.625rem;
     width: 100%;
     padding: 0.625rem;
-    border-bottom: 0.0625rem solid var(--divider-color);
-    background-color: var(--bg-color);
+    border-bottom: 0.0625rem solid var(--ngx-jr-divider-color);
+    background-color: var(--ngx-jr-bg-color);
   }
 
   &-container {
@@ -68,20 +69,20 @@
       max-width: 50%;
       min-width: 420px;
       padding: 0 0.875rem 0.625rem;
-      background-color: var(--bg-color);
-      border: 0.0625rem solid var(--divider-color);
+      background-color: var(--ngx-jr-bg-color);
+      border: 0.0625rem solid var(--ngx-jr-divider-color);
       border-radius: 0.5rem;
 
       &:hover,
       &:focus-within {
-        border-color: var(--accent-color);
+        border-color: var(--ngx-jr-accent-color);
       }
 
       &-size {
         font-size: 0.625rem;
         font-weight: 500;
         font-family: var(--ngx-jr-font-family), serif;
-        color: var(--secondary-text-color);
+        color: var(--ngx-jr-secondary-text-color);
         white-space: break-spaces;
       }
     }

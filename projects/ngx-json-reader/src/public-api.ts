@@ -7,4 +7,5 @@ export {
   NgxJsonReaderSrcUrls,
   NgxJsonReaderHeaders,
   NgxJsonReaderData,
+  NgxJsonReaderChangeEventType,
 } from './lib/types';
