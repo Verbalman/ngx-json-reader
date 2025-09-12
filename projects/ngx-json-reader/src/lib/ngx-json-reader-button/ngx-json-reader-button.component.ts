@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'ngx-json-reader-button',
@@ -9,9 +9,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class NgxJsonReaderButtonComponent {
 
-  @Input() label!: string;
+  label = input.required<string>();
 
-  @Output() actionClick = new EventEmitter<boolean>();
+  actionClick = output<boolean>();
 
   actionOnClick() {
     this.actionClick.emit(true);

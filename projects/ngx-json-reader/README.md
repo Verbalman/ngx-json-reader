@@ -1,6 +1,6 @@
 # NgxJsonReader
 
-**ngx-json-reader** is a lightweight Angular 17+ library for working with JSON in your applications.
+**ngx-json-reader** is a lightweight Angular 20+ library for working with JSON in your applications.
 It provides a standalone component that can:
 
 - Load JSON from URLs or directly from data inputs

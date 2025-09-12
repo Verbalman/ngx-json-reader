@@ -6,8 +6,9 @@
 
   <section class="ngx-jr-container">
     <div class="ngx-jr-content">
-      @if (collection().length > 0) {
-        @for (item of collection(); let index = $index; track index;) {
+      @let collectionList = collection();
+      @if (collectionList.length) {
+        @for (item of collectionList; let index = $index; track index;) {
           <div
             #collectionElement
             class="ngx-jr-content-item"
@@ -27,9 +28,9 @@
               [value]="item"
               [path]="[]"
               [collectionIndex]="index"
-              [expanded]="expanded"
-              [modified]="modified"
-              [editable]="editable"
+              [expanded]="expanded()"
+              [modified]="modified()"
+              [editable]="editable()"
               (valueChange)="onValueChange($event)"
               (delete)="onDelete($event)"
             />

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, computed, effect, ElementRef, EventEmitter, inject, Input, Output, QueryList, signal, Signal, ViewChildren } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
 import { NgxJsonReaderButtonComponent } from './ngx-json-reader-button/ngx-json-reader-button.component';
 import { NgxJsonReaderNodeComponent } from './ngx-json-reader-node/ngx-json-reader-node.component';
 import {
@@ -24,22 +24,22 @@ import { deleteAtPath, updateAtPath } from './utils';
   styleUrl: 'ngx-json-reader.component.scss',
 })
 export class NgxJsonReaderComponent {
-  #http = inject(HttpClient);
+  readonly #http = inject(HttpClient);
   readonly #defaultRootLabel = '__root__';
 
-  @Input() srcUrls?: NgxJsonReaderSrcUrls;
-  @Input() srcHeaders?: NgxJsonReaderHeaders;
-  @Input() data?: NgxJsonReaderData;
+  srcUrls = input<NgxJsonReaderSrcUrls>();
+  srcHeaders = input<NgxJsonReaderHeaders>();
+  data = input<NgxJsonReaderData>();
 
-  @Input() editable = true;
-  @Input() modified = false;
-  @Input() expanded = true;
+  editable = input<boolean>(true);
+  modified = input<boolean>(false);
+  expanded = input<boolean>(true);
 
-  @Input() rootLabel?: string;
-  @Input() downloadFilename: string | string[] = 'data.json';
+  rootLabel = input<string>();
+  downloadFilename = input<string | string[]>('data.json');
 
-  @Output() dataChange = new EventEmitter<NgxJsonReaderChangeEvent>();
-  @Output() error = new EventEmitter<any>();
+  dataChange = output<NgxJsonReaderChangeEvent>();
+  error = output<any>();
 
   @ViewChildren('collectionElement') collectionElements!: QueryList<ElementRef<HTMLDivElement>>;
 
@@ -64,11 +64,11 @@ export class NgxJsonReaderComponent {
 
   constructor() {
     effect(() => {
-      const urls = this.srcUrls;
+      const urls = this.srcUrls();
       const staticData = this.#getStaticData();
 
       if (urls?.length) {
-        this.#fetchMany(urls, this.srcHeaders);
+        this.#fetchMany(urls, this.srcHeaders());
       } else {
         this.#setToCollection(staticData);
       }
@@ -85,17 +85,20 @@ export class NgxJsonReaderComponent {
     }
   }
 
-  getRootLabel(index: number) {
-    if (this.rootLabel) {
-      return this.rootLabel;
+  getRootLabel(index: number): string {
+    const rootLabel = this.rootLabel();
+    if (rootLabel) {
+      return rootLabel;
     }
 
-    if (Array.isArray(this.downloadFilename) && this.downloadFilename.length) {
-      return this.downloadFilename[index];
+    const downloadFilename = this.downloadFilename();
+    if (Array.isArray(downloadFilename) && downloadFilename.length) {
+      return downloadFilename[index];
     }
 
-    if (this.srcUrls?.length) {
-      return this.srcUrls[index];
+    const srcUrls = this.srcUrls();
+    if (srcUrls?.length) {
+      return srcUrls[index];
     }
 
     return this.#defaultRootLabel;
@@ -103,7 +106,9 @@ export class NgxJsonReaderComponent {
 
   download(index: number) {
     try {
-      let name = (this.downloadFilename && Array.isArray(this.downloadFilename)) ? this.downloadFilename[index] : this.downloadFilename;
+      const downloadFilename = this.downloadFilename();
+
+      let name = (downloadFilename && Array.isArray(downloadFilename)) ? downloadFilename[index] : downloadFilename;
       const collectionItem = this.collection()[index];
 
       if (!name.endsWith('.json')) {
@@ -166,7 +171,7 @@ export class NgxJsonReaderComponent {
   }
 
   #getStaticData() {
-    const staticData = this.data;
+    const staticData = this.data();
 
     if (staticData && Array.isArray(staticData)) {
       return staticData;
@@ -194,7 +199,7 @@ export class NgxJsonReaderComponent {
       })
       .catch((error) => {
         console.error("Cannot fetch data!", error);
-        this.error.emit()
+        this.error.emit(error)
       });
   }
 }

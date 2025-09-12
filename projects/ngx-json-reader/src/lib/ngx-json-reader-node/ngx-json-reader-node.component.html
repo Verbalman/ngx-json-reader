@@ -1,29 +1,29 @@
 <div class="ngx-jr-details-wrapper">
   @if (type === valueType.PRIMITIVE) {
     <div class="">
-      <span class="ngx-jr-details-label">{{ label }}: </span>
-      <span class="ngx-jr-details-current-value">{{ value | json }}</span>
+      <span class="ngx-jr-details-label">{{ label() }}: </span>
+      <span class="ngx-jr-details-current-value">{{ value() | json }}</span>
 
-      @if (editable) {
+      @if (editable()) {
         <div>
-          <input type="text" class="ngx-jr-input" [value]="value" (change)="onInput($event)" />
+          <input type="text" class="ngx-jr-input" [value]="value()" (change)="onInput($event)" />
         </div>
       }
     </div>
   } @else {
     <details
       class="ngx-jr-details"
-      [attr.open]="expanded ? true : null"
+      [attr.open]="expanded() ? true : null"
     >
       <summary>
         @switch(type) {
           @case (valueType.OBJECT) {
-            <span class="ngx-jr-details-label">{{ label }}</span>
+            <span class="ngx-jr-details-label">{{ label() }}</span>
             <span class="ngx-jr-details-type-marker"> &#123; {{ keys.length }} &#125;</span>
           }
           @case (valueType.ARRAY) {
-            <span class="ngx-jr-details-label">{{ label }}</span>
-            <span class="ngx-jr-details-type-marker"> [{{ value?.length }}]</span>
+            <span class="ngx-jr-details-label">{{ label() }}</span>
+            <span class="ngx-jr-details-type-marker"> [{{ value()?.length }}]</span>
           }
         }
       </summary>
@@ -33,17 +33,17 @@
           @for (k of keys; let index = $index; track index) {
             <ngx-json-reader-node
               [label]="k"
-              [value]="value[k]"
+              [value]="value()[k]"
               [path]="makePath(k)"
-              [collectionIndex]="collectionIndex"
-              [expanded]="expanded"
-              [modified]="modified"
-              [editable]="editable"
+              [collectionIndex]="collectionIndex()"
+              [expanded]="expanded()"
+              [modified]="modified()"
+              [editable]="editable()"
               (valueChange)="valueChange.emit($event)"
               (delete)="delete.emit($event)"
             />
           }
-          @if (modified) {
+          @if (modified()) {
             <div class="kv">
               <ngx-json-reader-button label="Add" (actionClick)="addObjectProp()" />
             </div>
@@ -51,23 +51,23 @@
         </div>
       } @else if (type === valueType.ARRAY) {
         <div class="ngx-jr-details-content">
-          @for (item of value; let index = $index; track index) {
+          @for (item of value(); let index = $index; track index) {
             <ngx-json-reader-node
               [label]="index"
               [value]="item"
               [path]="makePath(index)"
-              [collectionIndex]="collectionIndex"
-              [expanded]="expanded"
-              [modified]="modified"
-              [editable]="editable"
+              [collectionIndex]="collectionIndex()"
+              [expanded]="expanded()"
+              [modified]="modified()"
+              [editable]="editable()"
               (valueChange)="valueChange.emit($event)"
               (delete)="delete.emit($event)"
             />
-            @if (modified) {
+            @if (modified()) {
               <ngx-json-reader-button label="Delete" (actionClick)="onDelete(index, item)" />
             }
           }
-          @if (modified) {
+          @if (modified()) {
             <div class="kv">
               <ngx-json-reader-button label="Push" (actionClick)="addArrayItem()" />
             </div>

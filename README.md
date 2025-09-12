@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/ngx-json-reader.svg)](https://www.npmjs.com/package/ngx-json-reader)
 [![GitHub stars](https://img.shields.io/github/stars/Verbalman/ngx-json-reader.svg?style=social)](https://github.com/Verbalman/ngx-json-reader)
 
-**ngx-json-reader** is a lightweight Angular 17+ library for working with JSON in your applications.
+**ngx-json-reader** is a lightweight Angular 20+ library for working with JSON in your applications.
 It provides a standalone component that can:
 
 - Load JSON from URLs or directly from data inputs

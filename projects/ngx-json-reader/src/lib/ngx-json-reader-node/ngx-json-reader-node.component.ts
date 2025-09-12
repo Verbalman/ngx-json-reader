@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { NgxJsonReaderButtonComponent } from '../ngx-json-reader-button/ngx-json-reader-button.component';
 import {
   NgxJsonReaderChangeEventType,
@@ -21,42 +21,42 @@ import {
   styleUrl: './ngx-json-reader-node.component.scss'
 })
 export class NgxJsonReaderNodeComponent {
-  @Input() label!: string | number;
-  @Input() value!: NgxJsonReaderValue | any;
-  @Input() path: NgxJsonReaderCollectionPath = [];
-  @Input() collectionIndex!: number;
+  label = input.required<string | number>();
+  value = input.required<NgxJsonReaderValue | any>();
+  path = input<NgxJsonReaderCollectionPath>([]);
+  collectionIndex = input.required<number>();
 
-  @Input() editable = true;
-  @Input() modified = false;
-  @Input() expanded = false;
+  editable = input<boolean>(true);
+  modified = input<boolean>(false);
+  expanded = input<boolean>(true);
 
-  @Output() valueChange = new EventEmitter<NgxJsonReaderNodeValueChangeEmit>();
-  @Output() delete = new EventEmitter<NgxJsonReaderNodeDeleteEmit>();
+  valueChange = output<NgxJsonReaderNodeValueChangeEmit>();
+  delete = output<NgxJsonReaderNodeDeleteEmit>();
 
   readonly valueType = NgxJsonReaderNodeValueType;
 
   get type(): NgxJsonReaderNodeValueType {
-    if (Array.isArray(this.value)) {
+    if (Array.isArray(this.value())) {
       return NgxJsonReaderNodeValueType.ARRAY;
     }
 
-    if (this.value !== null && typeof this.value === NgxJsonReaderNodeValueType.OBJECT) {
+    if (this.value() !== null && typeof this.value() === NgxJsonReaderNodeValueType.OBJECT) {
       return NgxJsonReaderNodeValueType.OBJECT;
     }
 
     return NgxJsonReaderNodeValueType.PRIMITIVE;
   }
   get keys(): string[] {
-    return (this.type === NgxJsonReaderNodeValueType.OBJECT) ? Object.keys(this.value as any) : [];
+    return (this.type === NgxJsonReaderNodeValueType.OBJECT) ? Object.keys(this.value() as any) : [];
   }
 
   makePath(item: string | number): NgxJsonReaderCollectionPath {
-    return [...this.path, item.toString()];
+    return [...this.path(), item.toString()];
   }
 
   onInput(e: Event) {
     const input = e.target as HTMLInputElement;
-    const prev = this.value;
+    const prev = this.value();
     const raw = input.value;
     let next: any = raw;
     if (/^-?\d+(\.\d+)?$/.test(raw)) {
@@ -70,10 +70,10 @@ export class NgxJsonReaderNodeComponent {
     }
     this.valueChange.emit({
       type: NgxJsonReaderChangeEventType.UPDATE,
-      path: this.path,
+      path: this.path(),
       previous: prev,
       current: next,
-      collectionIndex: this.collectionIndex,
+      collectionIndex: this.collectionIndex(),
     });
   }
 
@@ -81,9 +81,9 @@ export class NgxJsonReaderNodeComponent {
   onDelete(index: number, prev: any) {
     this.delete.emit({
       type: NgxJsonReaderChangeEventType.DELETE,
-      path: [...this.path, index],
+      path: [...this.path(), index],
       previous: prev,
-      collectionIndex: this.collectionIndex,
+      collectionIndex: this.collectionIndex(),
     });
   }
 
@@ -92,28 +92,28 @@ export class NgxJsonReaderNodeComponent {
     const key = prompt('New property name');
     if (!key) return;
 
-    const prev = (this.value as any)[key];
+    const prev = (this.value() as any)[key];
     if (prev !== undefined) return alert('Key already exists');
 
     this.valueChange.emit({
       type: NgxJsonReaderChangeEventType.ADD,
-      path: [...this.path, key],
+      path: [...this.path(), key],
       previous: undefined,
       current: '',
-      collectionIndex: this.collectionIndex,
+      collectionIndex: this.collectionIndex(),
     });
   }
 
 
   addArrayItem() {
-    const arr = Array.isArray(this.value) ? [...(this.value as any[])] : [];
+    const arr = Array.isArray(this.value()) ? [...(this.value() as any[])] : [];
     arr.push('');
     this.valueChange.emit({
       type: NgxJsonReaderChangeEventType.ADD,
-      path: this.path,
-      previous: this.value,
+      path: this.path(),
+      previous: this.value(),
       current: arr,
-      collectionIndex: this.collectionIndex,
+      collectionIndex: this.collectionIndex(),
     });
   }
 }
