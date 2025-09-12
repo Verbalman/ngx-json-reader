@@ -13,6 +13,12 @@ It provides a standalone component that can:
 
 Perfect for developer tools, admin dashboards, or any Angular app that needs an interactive JSON viewer/editor.
 
+## ToDo
+
+- [ ] Synchronous editing of identical JSONs
+- [ ] Errors emit
+- [ ] Simple view mode
+
 ## Installation
 
 ```bash
