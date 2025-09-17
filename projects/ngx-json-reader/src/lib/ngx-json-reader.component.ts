@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, computed, effect, ElementRef, inject, input, output, QueryList, signal, ViewChildren } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, input, output, QueryList, signal, viewChild, viewChildren } from '@angular/core';
 import { NgxJsonReaderButtonComponent } from './ngx-json-reader-button/ngx-json-reader-button.component';
 import { NgxJsonReaderNodeComponent } from './ngx-json-reader-node/ngx-json-reader-node.component';
 import {
@@ -41,9 +41,9 @@ export class NgxJsonReaderComponent {
   dataChange = output<NgxJsonReaderChangeEvent>();
   error = output<any>();
 
-  @ViewChildren('collectionElement') collectionElements!: QueryList<ElementRef<HTMLDivElement>>;
+  collectionElements = viewChildren<ElementRef<HTMLDivElement>>('collectionElement');
 
-  #collection = signal<NgxJsonReaderValue>([]);
+  readonly #collection = signal<NgxJsonReaderValue>([]);
 
   collection = computed<NgxJsonReaderValue[]>(() => {
     const collection = this.#collection();
@@ -154,18 +154,28 @@ export class NgxJsonReaderComponent {
   }
 
   expandOneCollection(index: number) {
-    this.collectionElements.get(index)?.nativeElement.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = true);
+    const collectionElements = this.collectionElements();
+    const el = collectionElements.at(index)?.nativeElement;
+    if (el) {
+      el.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = true);
+    }
   }
   expandAll() {
-    this.collectionElements.forEach((ref) => {
+    const collectionElements = this.collectionElements();
+    collectionElements?.forEach((ref) => {
       ref?.nativeElement.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = true);
     });
   }
   collapseOneCollection(index: number) {
-    this.collectionElements.get(index)?.nativeElement.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = false);
+    const collectionElements = this.collectionElements();
+    const el = collectionElements.at(index)?.nativeElement;
+    if (el) {
+      el.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = false);
+    }
   }
   collapseAll() {
-    this.collectionElements.forEach((ref) => {
+    const collectionElements = this.collectionElements();
+    collectionElements?.forEach((ref) => {
       ref?.nativeElement.querySelectorAll('details').forEach(d => (d as HTMLDetailsElement).open = false);
     });
   }
