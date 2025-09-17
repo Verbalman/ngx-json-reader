@@ -17,5 +17,9 @@ export class AppComponent {
     // 'https://stage-tools.kim-affiliates.com/assets/i18n/ua.json',
   ];
 
-  data = { user: { id: 1, name: 'Oleg' }, arr: [1,2,3] };
+  data = [
+    { user: { id: 1, name: 'Oleg' }, arr: [1,2,3] },
+    { user: { id: 1, name: 'Oleg' }, arr: [1,2,3] },
+    { user: { id: 1, name: 'Oleg' }, arr: [1,2,3] },
+  ];
 }
